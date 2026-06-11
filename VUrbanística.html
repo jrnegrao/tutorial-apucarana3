@@ -1,0 +1,153 @@
+<!DOCTYPE html>  
+<html lang="pt-BR">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Tutorial: Consulta de Viabilidade Urbanística</title>  
+    <link rel="stylesheet" href="style.css">  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            margin: 0;  
+            padding: 0;  
+            background-color: #f4f4f4;  
+        }  
+
+        header {  
+            text-align: center;  
+            background-color: #4285F4;  
+            color: white;  
+            padding: 20px;  
+        }  
+
+        nav {  
+            width: 200px;  
+            float: left;  
+            background: #1A2942;  
+            color: #fff;  
+            height: 100vh;  
+            padding: 10px;  
+        }  
+
+        nav a {  
+            color: #fff;  
+            text-decoration: none;  
+            display: block;  
+            margin: 5px 0;  
+        }  
+
+        section {  
+            margin-left: 220px;  
+            padding: 20px;  
+        }  
+
+        footer {  
+            text-align: center;  
+            padding: 10px;  
+            background: #1A2942;  
+            color: white;  
+            position: relative;  
+            bottom: 0;  
+            width: 100%;  
+        }  
+
+        .dica {  
+            background-color: #F5A623;  
+            padding: 10px;  
+            margin: 10px 0;  
+        }  
+
+        .atencao {  
+            background-color: #FFA500;  
+            padding: 10px;  
+            margin: 10px 0;  
+        }  
+    </style>  
+</head>  
+<body>  
+
+<header>  
+    <h1>🏗️ Tutorial: Consulta de Viabilidade Urbanística</h1>  
+    <p>Município de Apucarana - Guia Prático de Uso</p>  
+    <p align="center">  
+      <img src="./img/geoapuc.png" alt="Logo GeoAPUC" width="200" height="67"/>  
+    </p>  
+</header>  
+
+<nav>  
+    <h2>📑 Índice</h2>  
+    <a href="#introducao">Introdução</a>  
+    <a href="#a-interface">A Interface</a>  
+    <a href="#como-buscar">Como Buscar</a>  
+    <a href="#tipos-de-construcao">Tipos de Construção</a>  
+    <a href="#analise-espacial">Análise Espacial</a>  
+    <a href="#geolocalizacao-e-validacao">Geolocalização e Validação</a>  
+    <a href="#relatorio-de-viabilidade">Relatório de Viabilidade</a>  
+    <a href="#casos-praticos">Casos Práticos</a>  
+    <a href="#faq">FAQ</a>  
+</nav>  
+
+<section>  
+    <h2 id="introducao">🎯 Introdução</h2>  
+    <p>Bem-vindo ao tutorial da aplicação <strong>Consulta de Viabilidade Urbanística</strong>! Esta ferramenta permite verificar as condições urbanísticas de um terreno no município de Apucarana.</p>  
+    <p>💡 <strong>Dica:</strong> Este tutorial leva aproximadamente 15 minutos para ser concluído. Você pode navegar pelas seções clicando no índice acima.</p>  
+
+    <h2 id="a-interface">🖥️ A Interface</h2>  
+    <h3>1️⃣ O Mapa Interativo Central</h3>  
+    <p>A parte central da tela exibe o mapa do município de Apucarana.</p>  
+    <img src="./img/1-mapa-principal.png" alt="Mapa Principal" style="width:100%;">  
+    <p>💡 Você pode ampliar (zoom) e mover o mapa usando o mouse.</p>  
+
+    <h3>2️⃣ O Painel Lateral Direito</h3>  
+    <p>À direita, você encontra o painel de consulta com dois campos principais:</p>  
+    <ul>  
+        <li><strong>Busca por Inscrição:</strong> campo para digitar a inscrição cadastral do terreno.</li>  
+        <li><strong>Tipo de Construção:</strong> dropdown para selecionar a finalidade do empreendimento.</li>  
+    </ul>  
+
+    <h2 id="como-buscar">🔍 Como Buscar</h2>  
+    <h3>1️⃣ Digite a Inscrição Cadastral</h3>  
+    <p>No painel lateral, localize o campo <strong>"Inscrição cadastral"</strong> e digite o número do imóvel.</p>  
+    <img src="./img/2-busca-inscricao.png" alt="Busca por Inscrição" style="width:100%;">  
+    <p>💡 Se não souber a inscrição cadastral, utilize a barra de busca superior.</p>  
+
+    <h3>2️⃣ Selecione o Tipo de Construção</h3>  
+    <p>Logo abaixo do campo de inscrição, clique no dropdown <strong>"Opções de construção"</strong> e selecione a finalidade do empreendimento.</p>  
+
+    <h2 id="tipos-de-construcao">🏗️ Tipos de Construção</h2>  
+    <p>Cada tipo de construção está sujeito a regras específicas. Aqui estão as principais categorias:</p>  
+
+    <h3>🏠 Residencial</h3>  
+    <p>Inclui casas, sobrados e apartamentos.</p>  
+
+    <h3>🏪 Comercial</h3>  
+    <p>Destinado ao comércio e prestação de serviços.</p>  
+
+    <h3>🏭 Industrial</h3>  
+    <p>Atividades produtivas e manufatureiras.</p>  
+
+    <h2 id="analise-espacial">📍 Análise Espacial</h2>  
+    <p>Após clicar em "Próximo", o sistema realiza automaticamente uma análise espacial do terreno.</p>  
+
+    <h2 id="geolocalizacao-e-validacao">📍 Geolocalização e Validação</h2>  
+    <p>Etapa de validação da geolocalização, exibindo duas visões do lote para confirmação.</p>  
+
+    <h2 id="relatorio-de-viabilidade">📄 Relatório de Viabilidade</h2>  
+    <p>Clique em "Gerar Relatório" para emitir o documento oficial de viabilidade urbanística.</p>  
+
+    <h2 id="casos-praticos">💼 Casos Práticos</h2>  
+    <h3>Caso 1</h3>  
+    <p>Verificar Viabilidade para Construção Residencial.</p>  
+
+    <h2 id="faq">❓ FAQ - Perguntas Frequentes</h2>  
+    <p>Qual a diferença entre Viabilidade Urbanística e Viabilidade Econômica?</p>  
+
+</section>  
+
+<footer>  
+    <p>📞 Contato: suporte@apucarana.gov.br</p>  
+    <p>Última atualização: 2026 | Município de Apucarana - PR</p>  
+</footer>  
+
+</body>  
+</html>
