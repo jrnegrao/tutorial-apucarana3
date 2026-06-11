@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial: Consulta de Viabilidade Urbanística | GeoAPUC</title>
+<style>
+  :root{
+    --azul-vibrante:#4285F4;
+    --marinho:#1A2942;
+    --laranja:#F5A623;
+    --cinza-claro:#F4F6F9;
+    --branco:#FFFFFF;
+    --texto:#2D3748;
+    --texto-claro:#6B7A90;
+    --borda:#E2E8F0;
+    --sidebar-w:280px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color:var(--texto);
+    background:var(--cinza-claro);
+    line-height:1.65;
+  }
+
+  /* ========== CAPA ========== */
+  .cover{
+    position:relative;
+    min-height:100vh;
+    background:var(--branco);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  .cover::after{
+    content:"";
+    position:absolute;
+    top:-10%;
+    right:-15%;
+    width:65%;
+    height:140%;
+    background:var(--azul-vibrante);
+    transform:rotate(18deg);
+    z-index:0;
+  }
+
+  .cover-content{
+    position:relative;
+    z-index:1;
+    max-width:900px;
+    padding:0 6%;
+  }
+
+  .badge{
+    display:inline-block;
+    background:var(--laranja);
+    color:var(--branco);
+    font-weight:700;
+    font-size:.8rem;
+    letter-spacing:.08em;
+    padding:.6rem 1.4rem;
+    border-radius:6px;
+    margin-bottom:2rem;
+    text-transform:uppercase;
+  }
+
+  .cover h1{
+    font-size:clamp(2.5rem, 6vw, 4.2rem);
+    font-weight:800;
+    color:var(--marinho);
+    line-height:1.15;
+    margin-bottom:2rem;
+    letter-spacing:-.02em;
+  }
+
+  .cover-sub{
+    font-size:1.15rem;
+    font-weight:600;
+    color:var(--marinho);
+    max-width:520px;
+    margin-bottom:3rem;
+  }
+
+  .cover-footer{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+  }
+
+  .cover-footer img{
+    height:60px;
+    width:auto;
+  }
+
+  .cover-footer span{
+    font-weight:700;
+    color:var(--marinho);
+    font-size:1rem;
+  }
+
+  .scroll-hint{
+    position:absolute;
+    bottom:2.5rem;
+    left:6%;
+    z-index:1;
+    font-size:.85rem;
+    color:var(--texto-claro);
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+
+  .scroll-hint::after{
+    content:"↓";
+    animation:bounce 1.6s infinite;
+  }
+
+  @keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(6px);}
+  }
+
+  /* ========== LAYOUT PRINCIPAL ========== */
+  .layout{
+    display:flex;
+    align-items:flex-start;
+  }
+
+  /* ========== SIDEBAR ========== */
+  .sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--marinho);
+    color:var(--branco);
+    height:100vh;
+    position:sticky;
+    top:0;
+    overflow-y:auto;
+    padding:2rem 1.5rem;
+  }
+
+  .sidebar-logo{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-bottom:2.5rem;
+    padding-bottom:1.5rem;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+
+  .sidebar-logo img{
+    height:38px;
+    width:auto;
+  }
+
+  .sidebar-logo span{
+    font-size:.78rem;
+    color:rgba(255,255,255,.6);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+
+  .sidebar h3{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--laranja);
+    margin-bottom:1rem;
+    font-weight:700;
+  }
+
+  .sidebar nav ul{
+    list-style:none;
+  }
+
+  .sidebar nav li{
+    margin-bottom:.3rem;
+  }
+
+  .sidebar nav a{
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    color:rgba(255,255,255,.75);
+    text-decoration:none;
+    font-size:.92rem;
+    padding:.6rem .7rem;
+    border-radius:6px;
+    transition:all .15s ease;
+  }
+
+  .sidebar nav a:hover{
+    background:rgba(255,255,255,.06);
+    color:var(--branco);
+  }
+
+  .sidebar nav a .num{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:rgba(255,255,255,.1);
+    font-size:.75rem;
+    font-weight:700;
+    flex-shrink:0;
+  }
+
+  .sidebar nav a:hover .num{
+    background:var(--azul-vibrante);
+  }
+
+  /* ========== CONTEÚDO ========== */
+  .content{
+    flex:1;
+    max-width:880px;
+    padding:3.5rem 4rem 6rem;
+  }
+
+  .content h2{
+    font-size:2rem;
+    font-weight:800;
+    color:var(--marinho);
+    margin:3.5rem 0 1.2rem;
+    padding-bottom:.7rem;
+    border-bottom:3px solid var(--laranja);
+    display:inline-block;
+  }
+
+  .content h2:first-of-type{
+    margin-top:0;
+  }
+
+  .content h3{
+    font-size:1.3rem;
+    font-weight:700;
+    color:var(--azul-vibrante);
+    margin:2rem 0 .8rem;
+  }
+
+  .content p{
+    margin-bottom:1rem;
+    color:var(--texto);
+  }
+
+  .content ul, .content ol{
+    margin:0 0 1.2rem 1.5rem;
+  }
+
+  .content li{
+    margin-bottom:.4rem;
+  }
+
+  .content img{
+    max-width:100%;
+    border-radius:10px;
+    border:1px solid var(--borda);
+    box-shadow:0 4px 16px rgba(26,41,66,.08);
+    margin:1rem 0 .5rem;
+  }
+
+  .caption{
+    font-size:.85rem;
+    color:var(--texto-claro);
+    font-style:italic;
+    margin-bottom:1.5rem;
+  }
+
+  /* Caixas de destaque */
+  .box{
+    border-radius:10px;
+    padding:1.2rem 1.5rem;
+    margin:1.5rem 0;
+    display:flex;
+    gap:.9rem;
+    align-items:flex-start;
+  }
+
+  .box-icon{
+    font-size:1.4rem;
+    flex-shrink:0;
+    line-height:1.4;
+  }
+
+  .box-dica{
+    background:#EAF2FE;
+    border-left:4px solid var(--azul-vibrante);
+  }
+
+  .box-atencao{
+    background:#FFF6E8;
+    border-left:4px solid var(--laranja);
+  }
+
+  .box-exemplo{
+    background:#F0F9F0;
+    border-left:4px solid #4CAF50;
+  }
+
+  .box strong{
+    color:var(--marinho);
+  }
+
+  /* Tabelas */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0 1.5rem;
+    font-size:.92rem;
+  }
+
+  th{
+    background:var(--marinho);
+    color:var(--branco);
+    text-align:left;
+    padding:.7rem 1rem;
+    font-weight:600;
+  }
+
+  th:first-child{border-radius:8px 0 0 0;}
+  th:last-child{border-radius:0 8px 0 0;}
+
+  td{
+    padding:.65rem 1rem;
+    border-bottom:1px solid var(--borda);
+  }
+
+  tr:nth-child(even) td{
+    background:var(--cinza-claro);
+  }
+
+  code{
+    background:var(--cinza-claro);
+    border:1px solid var(--borda);
+    padding:.15rem .45rem;
+    border-radius:4px;
+    font-family:'Consolas', monospace;
+    font-size:.88em;
+    color:var(--azul-vibrante);
+  }
+
+  /* Passos numerados */
+  .step{
+    display:flex;
+    gap:1.2rem;
+    margin:1.8rem 0;
+    align-items:flex-start;
+  }
+
+  .step-num{
+    flex-shrink:0;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:var(--azul-vibrante);
+    color:var(--branco);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:1.1rem;
+  }
+
+  .step-body{flex:1;}
+  .step-body h3{margin:0 0 .5rem;}
+
+  hr{
+    border:none;
+    border-top:1px solid var(--borda);
+    margin:2.5rem 0;
+  }
+
+  /* Rodapé */
+  .footer{
+    background:var(--marinho);
+    color:rgba(255,255,255,.7);
+    padding:3rem 4rem;
+    text-align:center;
+  }
+
+  .footer strong{color:var(--branco);}
+
+  .footer a{color:var(--laranja);text-decoration:none;}
+
+  .back-to-top{
+    display:inline-block;
+    margin-top:1.5rem;
+    color:var(--azul-vibrante);
+    background:rgba(255,255,255,.08);
+    padding:.6rem 1.4rem;
+    border-radius:6px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:.9rem;
+    transition:background .15s ease;
+  }
+
+  .back-to-top:hover{background:rgba(255,255,255,.15);}
+
+  /* Responsivo */
+  @media (max-width: 900px){
+    .layout{flex-direction:column;}
+    .sidebar{
+      width:100%;
+      height:auto;
+      position:relative;
+      padding:1.5rem;
+    }
+    .content{padding:2rem 1.5rem 4rem;}
+    .footer{padding:2.5rem 1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ CAPA ============ -->
+<header class="cover" id="topo">
+  <div class="cover-content">
+    <span class="badge">Tutorial Prático</span>
+    <h1>Consulta de<br>Viabilidade Urbanística</h1>
+    <p class="cover-sub">
+      Aprenda a consultar terrenos, identificar o zoneamento, verificar parâmetros
+      urbanísticos e gerar relatórios de viabilidade para construções no
+      município de Apucarana.
+    </p>
+    <div class="cover-footer">
+      <img src="./img/geoapuc.png" alt="Logo GeoAPUC">
+      <span>IDEPPLAN | Prefeitura de Apucarana</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Role para começar</div>
+</header>
+
+<!-- ============ LAYOUT: SIDEBAR + CONTEÚDO ============ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="./img/geoapuc.png" alt="GeoAPUC">
+      <span>Índice</span>
+    </div>
+    <h3>Conteúdo do Tutorial</h3>
+    <nav>
+      <ul>
+        <li><a href="#introducao"><span class="num">1</span> Introdução</a></li>
+        <li><a href="#interface"><span class="num">2</span> A Interface</a></li>
+        <li><a href="#buscar"><span class="num">3</span> Como Buscar</a></li>
+        <li><a href="#tipos"><span class="num">4</span> Tipos de Construção</a></li>
+        <li><a href="#analise"><span class="num">5</span> Análise Espacial</a></li>
+        <li><a href="#geolocalizacao"><span class="num">6</span> Geolocalização e Validação</a></li>
+        <li><a href="#relatorio"><span class="num">7</span> Relatório de Viabilidade</a></li>
+        <li><a href="#casos"><span class="num">8</span> Casos Práticos</a></li>
+        <li><a href="#faq"><span class="num">9</span> FAQ</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+
+    <!-- INTRODUÇÃO -->
+    <section id="introducao">
+      <h2>🎯 Introdução</h2>
+      <p>
+        Bem-vindo ao tutorial da aplicação <strong>Consulta de Viabilidade Urbanística</strong>!
+        Esta ferramenta permite verificar as condições urbanísticas de um terreno no
+        município de Apucarana, identificando o zoneamento, os parâmetros de uso e
+        ocupação do solo, e gerando um relatório oficial de viabilidade.
+      </p>
+
+      <h3>O que você vai aprender:</h3>
+      <ul>
+        <li>Como navegar na interface da aplicação</li>
+        <li>Buscar um terreno por inscrição cadastral</li>
+        <li>Selecionar o tipo de construção pretendida</li>
+        <li>Interpretar o resultado da análise espacial</li>
+        <li>Validar a geolocalização do imóvel</li>
+        <li>Gerar e interpretar o relatório de viabilidade urbanística</li>
+      </ul>
+
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div>
+          <strong>Dica do professor:</strong> este tutorial leva aproximadamente
+          15 minutos para ser concluído. Use o menu ao lado para navegar
+          diretamente até a seção que você precisa.
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- A INTERFACE -->
+    <section id="interface">
+      <h2>🖥️ A Interface</h2>
+
+      <h3>1️⃣ O Mapa Interativo Central</h3>
+      <p>
+        A parte central da tela exibe o mapa do município de Apucarana com a
+        malha cadastral dos lotes urbanos destacada.
+      </p>
+      <img src="./img/1-mapa-principal.png" alt="Mapa Principal">
+      <p class="caption">Mapa interativo da Consulta de Viabilidade Urbanística</p>
+
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div>Você pode ampliar (zoom) e mover o mapa usando o mouse. Use a rodinha do mouse para zoom!</div>
+      </div>
+
+      <h3>2️⃣ O Painel Lateral Direito</h3>
+      <p>À direita, você encontra o painel de consulta com dois campos principais:</p>
+      <ul>
+        <li><strong>Busca por Inscrição:</strong> campo para digitar a inscrição cadastral do terreno</li>
+        <li><strong>Tipo de Construção:</strong> dropdown para selecionar a finalidade do empreendimento</li>
+      </ul>
+
+      <h3>3️⃣ Controles do Mapa</h3>
+      <p>À esquerda do mapa, você encontra os botões de controle:</p>
+      <ul>
+        <li><strong>+/-</strong> Zoom in e zoom out</li>
+        <li><strong>🏠</strong> Voltar para a visão inicial</li>
+        <li><strong>⬅️➡️</strong> Navegar entre visualizações anteriores</li>
+        <li><strong>⬆️</strong> Bússola / orientação do mapa</li>
+        <li><strong>ℹ️</strong> Informações</li>
+        <li><strong>🗑️</strong> Limpar seleção</li>
+      </ul>
+
+      <h3>4️⃣ Barra Superior</h3>
+      <p>Na parte superior da tela você encontra:</p>
+      <ul>
+        <li><strong>Logo GeoAPUC</strong> e título "Consulta de Viabilidade Urbanística"</li>
+        <li><strong>Barra de busca</strong> central: "Encontrar endereço ou lugar"</li>
+        <li><strong>Ícones</strong> no canto direito: camadas, lista, grid, régua, impressora e gráfico</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- COMO BUSCAR -->
+    <section id="buscar">
+      <h2>🔍 Como Buscar</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Digite a Inscrição Cadastral</h3>
+          <p>No painel lateral direito, localize o campo <strong>"Inscrição cadastral"</strong> e digite o número do imóvel.</p>
+          <img src="./img/2-busca-inscricao.png" alt="Busca por Inscrição">
+          <p class="caption">Campo de busca por inscrição cadastral</p>
+          <p>O formato da inscrição é:</p>
+          <p><code>101.024.0076.001</code></p>
+          <div class="box box-dica">
+            <div class="box-icon">💡</div>
+            <div>Se não souber a inscrição cadastral, utilize a barra de busca superior para localizar o endereço no mapa e identificar o lote desejado.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Selecione o Tipo de Construção</h3>
+          <p>Logo abaixo do campo de inscrição, clique no dropdown <strong>"Opções de construção"</strong> e selecione a finalidade do empreendimento.</p>
+          <img src="./img/3-tipo-construcao.png" alt="Tipo de Construção">
+          <p class="caption">Dropdown com as opções de tipo de construção</p>
+
+          <table>
+            <tr><th>Tipo</th><th>Descrição</th></tr>
+            <tr><td><strong>Institucional</strong></td><td>Equipamentos públicos, igrejas, escolas, hospitais</td></tr>
+            <tr><td><strong>Residencial</strong></td><td>Habitações unifamiliares e multifamiliares</td></tr>
+            <tr><td><strong>Comercial</strong></td><td>Comércio e prestação de serviços</td></tr>
+            <tr><td><strong>Industrial</strong></td><td>Atividades produtivas e manufatureiras</td></tr>
+            <tr><td><strong>Misto</strong></td><td>Combinação de usos (ex: residencial + comercial)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Clique em "Próximo"</h3>
+          <p>Após preencher a inscrição e selecionar o tipo de construção, clique no botão <strong>"Próximo &gt;"</strong> para iniciar a análise.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- TIPOS DE CONSTRUÇÃO -->
+    <section id="tipos">
+      <h2>🏗️ Tipos de Construção</h2>
+      <p>
+        Cada tipo de construção está sujeito a regras específicas definidas pelo
+        <strong>Plano Diretor Municipal</strong> e pelo <strong>Código de Obras e Edificações</strong>
+        de Apucarana. Veja o que cada categoria contempla:
+      </p>
+
+      <h3>🏠 Residencial</h3>
+      <p>Destinado à moradia. Inclui casas, sobrados, apartamentos e condomínios. As exigências variam conforme o zoneamento (recuos, taxa de ocupação, coeficiente de aproveitamento).</p>
+
+      <h3>🏪 Comercial</h3>
+      <p>Destinado ao comércio varejista e atacadista, e à prestação de serviços. Deve ser compatível com o zoneamento local.</p>
+
+      <h3>🏭 Industrial</h3>
+      <p>Destinado à produção manufatureira. Geralmente restrito a zonas industriais (ZI) e zonas especializadas de produção (ZEPC).</p>
+
+      <h3>🏛️ Institucional</h3>
+      <p>Destinado a equipamentos e serviços públicos ou comunitários: escolas, postos de saúde, igrejas, associações.</p>
+
+      <h3>🔀 Misto</h3>
+      <p>Combinação de dois ou mais usos no mesmo imóvel. Sujeito às regras de todos os usos combinados.</p>
+
+      <div class="box box-atencao">
+        <div class="box-icon">⚠️</div>
+        <div>A viabilidade de cada tipo de construção depende diretamente do zoneamento do terreno. Consulte sempre o resultado da análise espacial antes de tomar decisões.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- ANÁLISE ESPACIAL -->
+    <section id="analise">
+      <h2>📍 Análise Espacial</h2>
+      <p>
+        Após clicar em "Próximo", o sistema realiza automaticamente uma
+        <strong>análise espacial</strong> do terreno, cruzando a inscrição cadastral
+        com as camadas de zoneamento municipal.
+      </p>
+      <img src="./img/4-analise-espacial.png" alt="Análise Espacial">
+      <p class="caption">Resultado da análise espacial com zoneamento identificado</p>
+
+      <h3>O que o sistema verifica:</h3>
+      <ul>
+        <li><strong>Localização exata</strong> do lote no mapa cadastral</li>
+        <li><strong>Zoneamento</strong> em que o lote está inserido</li>
+        <li><strong>Camadas encontradas</strong> e número de resultados</li>
+      </ul>
+
+      <h3>Interpretando o Resultado</h3>
+      <p>No exemplo acima, para a inscrição <code>101.024.0076.001</code>:</p>
+      <table>
+        <tr><th>Campo</th><th>Resultado</th></tr>
+        <tr><td><strong>Camadas encontradas</strong></td><td>1 resultado(s)</td></tr>
+        <tr><td><strong>Zoneamento</strong></td><td>O lote cruza 1 zona(s)</td></tr>
+        <tr><td><strong>Zona selecionada</strong></td><td>ZC1 - Zona Comercial Um</td></tr>
+      </table>
+
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div>O lote aparece destacado em <strong>vermelho</strong> no mapa para facilitar a identificação visual.</div>
+      </div>
+
+      <p>Os botões disponíveis nesta etapa são:</p>
+      <ul>
+        <li><strong>🔄 Gerar relatório</strong> — avança para a geração do documento oficial</li>
+        <li><strong>⬜ Centralizar</strong> — centraliza o mapa no lote encontrado</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- GEOLOCALIZAÇÃO -->
+    <section id="geolocalizacao">
+      <h2>🗺️ Geolocalização e Validação</h2>
+      <p>O sistema apresenta uma etapa de <strong>validação da geolocalização</strong>, exibindo duas visões do lote para confirmação.</p>
+      <img src="./img/5-geolocaliza-layout.png" alt="Geolocalização e Validação">
+      <p class="caption">Tela de geolocalização com visualização do lote para validação</p>
+
+      <h3>O que é exibido:</h3>
+      <ul>
+        <li><strong>Mapa principal</strong> com o lote destacado em vermelho (visão ampliada)</li>
+        <li><strong>Miniatura</strong> com visão aproximada do lote para confirmação</li>
+        <li><strong>Camadas encontradas</strong> confirmando o zoneamento: <code>ZC1 - Zona Comercial Um</code></li>
+      </ul>
+
+      <h3>Ações disponíveis:</h3>
+      <table>
+        <tr><th>Botão</th><th>Ação</th></tr>
+        <tr><td><strong>🔄 Tentar novamente</strong></td><td>Retorna à busca para corrigir a inscrição ou o tipo de construção</td></tr>
+        <tr><td><strong>▶️ Continuar</strong></td><td>Confirma a geolocalização e avança para o relatório</td></tr>
+      </table>
+
+      <div class="box box-atencao">
+        <div class="box-icon">⚠️</div>
+        <div>Verifique cuidadosamente se o lote destacado no mapa corresponde ao imóvel correto antes de clicar em <strong>Continuar</strong>.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- RELATÓRIO -->
+    <section id="relatorio">
+      <h2>📄 Relatório de Viabilidade</h2>
+      <p>Após confirmar a geolocalização, clique em <strong>"Gerar Relatório"</strong> para emitir o documento oficial de viabilidade urbanística.</p>
+      <img src="./img/6-gerar-relatorio.png" alt="Gerar Relatório">
+      <p class="caption">Tela final com botão para geração do relatório de viabilidade</p>
+
+      <p>O relatório gerado contém:</p>
+      <ul>
+        <li><strong>Identificação do imóvel</strong> (inscrição cadastral e endereço)</li>
+        <li><strong>Zoneamento</strong> em que o lote está inserido</li>
+        <li><strong>Tipo de construção</strong> consultado</li>
+        <li><strong>Parâmetros urbanísticos</strong> aplicáveis (recuos, taxa de ocupação, coeficiente de aproveitamento)</li>
+        <li><strong>Resultado da viabilidade</strong> — se o uso pretendido é permitido, tolerado ou proibido no zoneamento</li>
+      </ul>
+
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div>O relatório pode ser salvo em PDF e utilizado como documento de referência junto à Prefeitura de Apucarana. Para fins legais e protocolos oficiais, consulte a <strong>Idepplan</strong>.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <!-- CASOS PRÁTICOS -->
+    <section id="casos">
+      <h2>💼 Casos Práticos</h2>
+
+      <h3>Caso 1: Verificar Viabilidade para Construção Residencial</h3>
+      <p><strong>Objetivo:</strong> Saber se é possível construir uma residência em determinado terreno.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Digite a inscrição cadastral no campo <strong>"Inscrição cadastral"</strong></li>
+        <li>Selecione <strong>"Residencial"</strong> no dropdown de tipo de construção</li>
+        <li>Clique em <strong>"Próximo &gt;"</strong></li>
+        <li>Verifique o zoneamento identificado na análise espacial</li>
+        <li>Confirme a geolocalização e clique em <strong>"Continuar"</strong></li>
+        <li>Clique em <strong>"Gerar Relatório"</strong> para obter o documento</li>
+      </ol>
+
+      <h3>Caso 2: Verificar Viabilidade para Uso Comercial</h3>
+      <p><strong>Objetivo:</strong> Confirmar se um lote em zona comercial permite abertura de estabelecimento.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Digite a inscrição cadastral</li>
+        <li>Selecione <strong>"Comercial"</strong> no dropdown</li>
+        <li>Clique em <strong>"Próximo &gt;"</strong></li>
+        <li>Verifique se o zoneamento (ex: ZC1) é compatível com uso comercial</li>
+        <li>Confirme a geolocalização e gere o relatório</li>
+      </ol>
+
+      <h3>Caso 3: Terreno com Uso Misto</h3>
+      <p><strong>Objetivo:</strong> Verificar se é possível combinar moradia e comércio no mesmo lote.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Digite a inscrição cadastral</li>
+        <li>Selecione <strong>"Misto"</strong> no dropdown</li>
+        <li>Avance e verifique as restrições de cada uso no resultado</li>
+        <li>Gere o relatório para obter os parâmetros urbanísticos detalhados</li>
+      </ol>
+    </section>
+
+    <hr>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <h2>❓ FAQ - Perguntas Frequentes</h2>
+
+      <h3>Qual a diferença entre Viabilidade Urbanística e Viabilidade Econômica?</h3>
+      <p>A <strong>Viabilidade Urbanística</strong> verifica as condições de uso e ocupação do solo (zoneamento, recuos, taxa de ocupação). A <strong>Viabilidade Econômica</strong> verifica quais atividades econômicas (CNAEs) são permitidas no local.</p>
+
+      <h3>O que é ZC1 - Zona Comercial Um?</h3>
+      <p>É uma zona destinada principalmente ao comércio e serviços de médio e grande porte. Consulte a Lei Complementar Municipal nº 08/20 para os parâmetros urbanísticos detalhados desta zona.</p>
+
+      <h3>Posso construir qualquer tipo de edificação em qualquer zona?</h3>
+      <p>Não. Cada zona tem restrições específicas de uso. Por exemplo, uma zona residencial (ZR) pode não permitir edificações industriais. O relatório de viabilidade indicará o que é permitido.</p>
+
+      <h3>O que fazer se o lote cruzar mais de uma zona?</h3>
+      <p>O sistema indicará todas as zonas encontradas. Neste caso, os parâmetros mais restritivos geralmente se aplicam. Consulte a Idepplan para orientação específica.</p>
+
+      <h3>O relatório tem validade legal?</h3>
+      <p>O relatório é um documento de consulta e referência. Para fins de aprovação de projetos e alvarás, é necessário protocolar junto à <strong>Secretaria de Obras ou Idepplan</strong> da Prefeitura de Apucarana.</p>
+
+      <h3>Encontrei um erro nos dados. Como reportar?</h3>
+      <p>Entre em contato com a Idepplan - Prefeitura de Apucarana através do email: <strong>sic@apucarana.pr.gov.br</strong></p>
+
+      <h3>A aplicação funciona em celular?</h3>
+      <p>Sim! A aplicação é responsiva e funciona bem em smartphones e tablets. Acesse pelo navegador do seu dispositivo.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ RODAPÉ ============ -->
+<footer class="footer">
+  <p><strong>Tutorial - Consulta de Viabilidade Urbanística | Apucarana - PR</strong></p>
+  <p style="margin-top:.8rem;">
+    📧 Email: <a href="mailto:suporte@apucarana.gov.br">suporte@apucarana.gov.br</a><br>
+    📱 Tel: (43) 3422-4000
+  </p>
+  <p style="margin-top:1rem; font-size:.85rem;">Última atualização: 2026 | Município de Apucarana - PR</p>
+  <a href="#topo" class="back-to-top">↑ Voltar ao topo</a>
+</footer>
+
+</body>
+</html>
