@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial: Viabilidade de Reformas | GeoAPUC</title>
+<style>
+  :root{
+    --azul-vibrante:#4285F4;
+    --marinho:#1A2942;
+    --laranja:#F5A623;
+    --cinza-claro:#F4F6F9;
+    --branco:#FFFFFF;
+    --texto:#2D3748;
+    --texto-claro:#6B7A90;
+    --borda:#E2E8F0;
+    --sidebar-w:280px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color:var(--texto);
+    background:var(--cinza-claro);
+    line-height:1.65;
+  }
+
+  .cover{
+    position:relative;
+    min-height:100vh;
+    background:var(--branco);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  .cover::after{
+    content:"";
+    position:absolute;
+    top:-10%;
+    right:-15%;
+    width:65%;
+    height:140%;
+    background:var(--azul-vibrante);
+    transform:rotate(18deg);
+    z-index:0;
+  }
+
+  .cover-content{
+    position:relative;
+    z-index:1;
+    max-width:900px;
+    padding:0 6%;
+  }
+
+  .badge{
+    display:inline-block;
+    background:var(--laranja);
+    color:var(--branco);
+    font-weight:700;
+    font-size:.8rem;
+    letter-spacing:.08em;
+    padding:.6rem 1.4rem;
+    border-radius:6px;
+    margin-bottom:2rem;
+    text-transform:uppercase;
+  }
+
+  .cover h1{
+    font-size:clamp(2.5rem, 6vw, 4.2rem);
+    font-weight:800;
+    color:var(--marinho);
+    line-height:1.15;
+    margin-bottom:2rem;
+    letter-spacing:-.02em;
+  }
+
+  .cover-sub{
+    font-size:1.15rem;
+    font-weight:600;
+    color:var(--marinho);
+    max-width:560px;
+    margin-bottom:3rem;
+  }
+
+  .cover-footer{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+  }
+
+  .cover-footer img{
+    height:60px;
+    width:auto;
+  }
+
+  .cover-footer span{
+    font-weight:700;
+    color:var(--marinho);
+    font-size:1rem;
+  }
+
+  .scroll-hint{
+    position:absolute;
+    bottom:2.5rem;
+    left:6%;
+    z-index:1;
+    font-size:.85rem;
+    color:var(--texto-claro);
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+
+  .scroll-hint::after{
+    content:"↓";
+    animation:bounce 1.6s infinite;
+  }
+
+  @keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(6px);}
+  }
+
+  .layout{
+    display:flex;
+    align-items:flex-start;
+  }
+
+  .sidebar{
+    width:var(--sidebar-w);
+    flex-shrink:0;
+    background:var(--marinho);
+    color:var(--branco);
+    height:100vh;
+    position:sticky;
+    top:0;
+    overflow-y:auto;
+    padding:2rem 1.5rem;
+  }
+
+  .sidebar-logo{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-bottom:2.5rem;
+    padding-bottom:1.5rem;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+
+  .sidebar-logo img{
+    height:38px;
+    width:auto;
+  }
+
+  .sidebar-logo span{
+    font-size:.78rem;
+    color:rgba(255,255,255,.6);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+
+  .sidebar h3{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--laranja);
+    margin-bottom:1rem;
+    font-weight:700;
+  }
+
+  .sidebar nav ul{list-style:none;}
+  .sidebar nav li{margin-bottom:.3rem;}
+
+  .sidebar nav a{
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    color:rgba(255,255,255,.75);
+    text-decoration:none;
+    font-size:.92rem;
+    padding:.6rem .7rem;
+    border-radius:6px;
+    transition:all .15s ease;
+  }
+
+  .sidebar nav a:hover{
+    background:rgba(255,255,255,.06);
+    color:var(--branco);
+  }
+
+  .sidebar nav a .num{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:rgba(255,255,255,.1);
+    font-size:.75rem;
+    font-weight:700;
+    flex-shrink:0;
+  }
+
+  .sidebar nav a:hover .num{background:var(--azul-vibrante);}
+
+  .content{
+    flex:1;
+    max-width:880px;
+    padding:3.5rem 4rem 6rem;
+  }
+
+  .content h2{
+    font-size:2rem;
+    font-weight:800;
+    color:var(--marinho);
+    margin:3.5rem 0 1.2rem;
+    padding-bottom:.7rem;
+    border-bottom:3px solid var(--laranja);
+    display:inline-block;
+  }
+
+  .content h2:first-of-type{margin-top:0;}
+
+  .content h3{
+    font-size:1.3rem;
+    font-weight:700;
+    color:var(--azul-vibrante);
+    margin:2rem 0 .8rem;
+  }
+
+  .content p{
+    margin-bottom:1rem;
+    color:var(--texto);
+  }
+
+  .content ul, .content ol{
+    margin:0 0 1.2rem 1.5rem;
+  }
+
+  .content li{margin-bottom:.4rem;}
+
+  .box{
+    border-radius:10px;
+    padding:1.2rem 1.5rem;
+    margin:1.5rem 0;
+    display:flex;
+    gap:.9rem;
+    align-items:flex-start;
+  }
+
+  .box-icon{
+    font-size:1.4rem;
+    flex-shrink:0;
+    line-height:1.4;
+  }
+
+  .box-dica{background:#EAF2FE;border-left:4px solid var(--azul-vibrante);}
+  .box-atencao{background:#FFF6E8;border-left:4px solid var(--laranja);}
+  .box-exemplo{background:#F0F9F0;border-left:4px solid #4CAF50;}
+
+  .box strong{color:var(--marinho);}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1rem 0 1.5rem;
+    font-size:.92rem;
+  }
+
+  th{
+    background:var(--marinho);
+    color:var(--branco);
+    text-align:left;
+    padding:.7rem 1rem;
+    font-weight:600;
+  }
+
+  th:first-child{border-radius:8px 0 0 0;}
+  th:last-child{border-radius:0 8px 0 0;}
+
+  td{
+    padding:.65rem 1rem;
+    border-bottom:1px solid var(--borda);
+  }
+
+  tr:nth-child(even) td{background:var(--cinza-claro);}
+
+  code{
+    background:var(--cinza-claro);
+    border:1px solid var(--borda);
+    padding:.15rem .45rem;
+    border-radius:4px;
+    font-family:'Consolas', monospace;
+    font-size:.88em;
+    color:var(--azul-vibrante);
+  }
+
+  .step{
+    display:flex;
+    gap:1.2rem;
+    margin:1.8rem 0;
+    align-items:flex-start;
+  }
+
+  .step-num{
+    flex-shrink:0;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:var(--azul-vibrante);
+    color:var(--branco);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:1.1rem;
+  }
+
+  .step-body{flex:1;}
+  .step-body h3{margin:0 0 .5rem;}
+
+  hr{
+    border:none;
+    border-top:1px solid var(--borda);
+    margin:2.5rem 0;
+  }
+
+  .footer{
+    background:var(--marinho);
+    color:rgba(255,255,255,.7);
+    padding:3rem 4rem;
+    text-align:center;
+  }
+
+  .footer strong{color:var(--branco);}
+  .footer a{color:var(--laranja);text-decoration:none;}
+
+  .back-to-top{
+    display:inline-block;
+    margin-top:1.5rem;
+    color:var(--azul-vibrante);
+    background:rgba(255,255,255,.08);
+    padding:.6rem 1.4rem;
+    border-radius:6px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:.9rem;
+    transition:background .15s ease;
+  }
+
+  .back-to-top:hover{background:rgba(255,255,255,.15);}
+
+  @media (max-width: 900px){
+    .layout{flex-direction:column;}
+    .sidebar{
+      width:100%;
+      height:auto;
+      position:relative;
+      padding:1.5rem;
+    }
+    .content{padding:2rem 1.5rem 4rem;}
+    .footer{padding:2.5rem 1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover" id="topo">
+  <div class="cover-content">
+    <span class="badge">Tutorial Prático</span>
+    <h1>Viabilidade de<br>Reformas</h1>
+    <p class="cover-sub">
+      Esta ferramenta verifica viabilidade de reformas e ajuda a entender as
+      condições aplicáveis ao imóvel antes da execução do projeto.
+    </p>
+    <div class="cover-footer">
+      <img src="./img/geoapuc.png" alt="Logo GeoAPUC">
+      <span>IDEPPLAN | Prefeitura de Apucarana</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Role para começar</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="./img/geoapuc.png" alt="GeoAPUC">
+      <span>Índice</span>
+    </div>
+    <h3>Conteúdo do Tutorial</h3>
+    <nav>
+      <ul>
+        <li><a href="#introducao"><span class="num">1</span> Introdução</a></li>
+        <li><a href="#interface"><span class="num">2</span> A Interface</a></li>
+        <li><a href="#buscar"><span class="num">3</span> Como Buscar</a></li>
+        <li><a href="#tipos"><span class="num">4</span> Tipos de Reforma</a></li>
+        <li><a href="#analise"><span class="num">5</span> Análise Espacial</a></li>
+        <li><a href="#geolocalizacao"><span class="num">6</span> Geolocalização</a></li>
+        <li><a href="#relatorio"><span class="num">7</span> Relatório</a></li>
+        <li><a href="#casos"><span class="num">8</span> Casos Práticos</a></li>
+        <li><a href="#faq"><span class="num">9</span> FAQ</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <section id="introducao">
+      <h2>🎯 Introdução</h2>
+      <p>Esta ferramenta verifica viabilidade de reformas e orienta o usuário sobre os passos necessários para consultar o imóvel, analisar restrições e gerar o documento final.</p>
+      <h3>O que você vai aprender:</h3>
+      <ul>
+        <li>Como navegar na interface da aplicação</li>
+        <li>Como localizar um imóvel pela inscrição cadastral</li>
+        <li>Como interpretar os tipos de reforma e os resultados da análise</li>
+        <li>Como validar a geolocalização do imóvel</li>
+        <li>Como gerar o relatório oficial</li>
+      </ul>
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div><strong>Dica:</strong> use o menu lateral para revisar cada etapa do fluxo sem precisar voltar ao início.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="interface">
+      <h2>🖥️ A Interface</h2>
+      <h3>1️⃣ Mapa Central</h3>
+      <p>O mapa central exibe o imóvel, sua localização e as camadas urbanísticas que influenciam a análise de reforma.</p>
+      <h3>2️⃣ Sidebar de Consulta</h3>
+      <p>Na lateral, o usuário encontra as opções de busca por imóvel, seletores de tipo de reforma e ações para avançar no processo.</p>
+      <h3>3️⃣ Painel de Resultados</h3>
+      <p>O painel exibe o status da consulta, a zona identificada e os avisos relevantes para a reforma pretendida.</p>
+      <div class="box box-exemplo">
+        <div class="box-icon">📋</div>
+        <div><strong>Resumo visual:</strong> mapa central, sidebar com opções de busca e área de resultados para acompanhar a análise.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="buscar">
+      <h2>🔍 Como Buscar</h2>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Insira a inscrição cadastral</h3>
+          <p>Digite a inscrição cadastral do imóvel no campo de busca para localizar o lote corretamente.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Selecione o tipo de reforma</h3>
+          <p>Escolha a categoria da reforma para que o sistema aplique as regras corretas na análise.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Avance para a validação</h3>
+          <p>Confirme os dados exibidos e siga para a análise espacial do imóvel.</p>
+        </div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="tipos">
+      <h2>🏗️ Tipos de Reforma</h2>
+      <p>As reformas são agrupadas em categorias para facilitar a avaliação da compatibilidade com a legislação e com o uso do imóvel.</p>
+      <table>
+        <tr><th>Categoria</th><th>Descrição</th></tr>
+        <tr><td><strong>Residencial</strong></td><td>Reformas em casas, apartamentos e unidades de moradia.</td></tr>
+        <tr><td><strong>Comercial</strong></td><td>Intervenções em lojas, salas comerciais e espaços de atendimento.</td></tr>
+        <tr><td><strong>Estrutural</strong></td><td>Alterações que afetam elementos principais da edificação.</td></tr>
+        <tr><td><strong>Cosmética</strong></td><td>Melhorias de acabamento, pintura e ajustes sem grande impacto estrutural.</td></tr>
+      </table>
+      <div class="box box-atencao">
+        <div class="box-icon">⚠️</div>
+        <div><strong>Atenção:</strong> reformas estruturais exigem análise mais cuidadosa e podem demandar validações adicionais.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="analise">
+      <h2>📍 Análise Espacial</h2>
+      <p>Após a busca, o sistema cruza a inscrição cadastral e o tipo de reforma com o zoneamento do imóvel para indicar se a solicitação é compatível.</p>
+      <h3>O que o sistema verifica:</h3>
+      <ul>
+        <li>Localização do imóvel</li>
+        <li>Zoneamento associado ao lote</li>
+        <li>Compatibilidade da reforma com as regras vigentes</li>
+      </ul>
+      <div class="box box-dica">
+        <div class="box-icon">💡</div>
+        <div>Se houver conflito com o zoneamento, o sistema exibirá a restrição antes da emissão do relatório.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="geolocalizacao">
+      <h2>🗺️ Geolocalização</h2>
+      <p>Esta etapa valida a localização do imóvel para garantir que o lote consultado corresponde ao endereço informado.</p>
+      <h3>Validação da posição</h3>
+      <ul>
+        <li>Confira se o ponto destacado está no imóvel correto</li>
+        <li>Revise a inscrição cadastral antes de continuar</li>
+        <li>Use a confirmação para evitar inconsistências na análise</li>
+      </ul>
+      <div class="box box-atencao">
+        <div class="box-icon">⚠️</div>
+        <div>Uma geolocalização incorreta pode gerar uma análise inconsistente para a reforma solicitada.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="relatorio">
+      <h2>📄 Relatório</h2>
+      <p>Ao final, o sistema gera um documento oficial com o resultado da consulta, o zoneamento identificado e as orientações aplicáveis à reforma.</p>
+      <h3>Conteúdo do relatório</h3>
+      <ul>
+        <li>Dados do imóvel</li>
+        <li>Tipo de reforma selecionado</li>
+        <li>Resultado da análise</li>
+        <li>Observações técnicas e restrições</li>
+      </ul>
+      <div class="box box-exemplo">
+        <div class="box-icon">📄</div>
+        <div><strong>Resultado esperado:</strong> um documento que possa ser salvo, impresso e usado como referência para o processo de reforma.</div>
+      </div>
+    </section>
+
+    <hr>
+
+    <section id="casos">
+      <h2>💼 Casos Práticos</h2>
+      <h3>Caso 1: Reforma residencial</h3>
+      <p><strong>Objetivo:</strong> verificar se a reforma interna de uma casa é compatível com o zoneamento.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Digite a inscrição cadastral.</li>
+        <li>Selecione <strong>Residencial</strong>.</li>
+        <li>Confirme a geolocalização e gere o relatório.</li>
+      </ol>
+
+      <h3>Caso 2: Reforma comercial</h3>
+      <p><strong>Objetivo:</strong> avaliar uma reforma em loja ou sala comercial.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Localize o imóvel pela inscrição cadastral.</li>
+        <li>Escolha <strong>Comercial</strong>.</li>
+        <li>Verifique a análise espacial e salve o documento.</li>
+      </ol>
+
+      <h3>Caso 3: Reforma estrutural</h3>
+      <p><strong>Objetivo:</strong> analisar uma intervenção que altera a estrutura da edificação.</p>
+      <p><strong>Passos:</strong></p>
+      <ol>
+        <li>Faça a busca pelo imóvel.</li>
+        <li>Selecione <strong>Estrutural</strong>.</li>
+        <li>Revise as restrições e emita o relatório.</li>
+      </ol>
+    </section>
+
+    <hr>
+
+    <section id="faq">
+      <h2>❓ FAQ - Perguntas Frequentes</h2>
+      <h3>O que é viabilidade de reformas?</h3>
+      <p>É a verificação de compatibilidade entre a reforma pretendida, o imóvel e as regras urbanísticas aplicáveis.</p>
+
+      <h3>Preciso informar a inscrição cadastral?</h3>
+      <p>Sim. A inscrição cadastral é a forma mais precisa de localizar o imóvel no sistema.</p>
+
+      <h3>Posso consultar qualquer tipo de reforma?</h3>
+      <p>O sistema organiza a consulta por categoria, como residencial, comercial, estrutural e cosmética.</p>
+
+      <h3>O que acontece se o imóvel estiver em outra zona?</h3>
+      <p>A análise espacial indicará as restrições ou permissões conforme o zoneamento encontrado.</p>
+
+      <h3>O relatório tem validade oficial?</h3>
+      <p>O relatório serve como documento técnico de consulta e referência para o processo de reforma.</p>
+    </section>
+  </main>
+</div>
+
+<footer class="footer">
+  <p><strong>Tutorial - Viabilidade de Reformas | Apucarana - PR</strong></p>
+  <p style="margin-top:.8rem;">
+    📧 Email: <a href="mailto:suporte@apucarana.gov.br">suporte@apucarana.gov.br</a><br>
+    📱 Tel: (43) 3422-4000
+  </p>
+  <p style="margin-top:1rem; font-size:.85rem;">Última atualização: 2026 | Município de Apucarana - PR</p>
+  <a href="#topo" class="back-to-top">↑ Voltar ao topo</a>
+</footer>
+
+</body>
+</html>
